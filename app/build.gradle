@@ -1,0 +1,132 @@
+apply plugin: 'com.android.application'
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+    }
+
+    dependencies {
+        classpath 'com.google.gms:google-services:3.0.0'
+    }
+}
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "com.pgmacdesign.googleapisamples"
+        minSdkVersion 17
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    dependencies {
+        //Multi-dex
+        compile 'com.android.support:multidex:1.0.1'
+
+
+        ////////////
+        //Google////
+        ////////////
+
+        //Account Login (auth)
+        compile 'com.google.android.gms:play-services-auth:10.0.1'
+
+        //Google+
+        compile 'com.google.android.gms:play-services-plus:10.0.1'
+
+        //Google actions
+        compile 'com.google.android.gms:play-services-base:10.0.1'
+
+        //Google address api
+        compile 'com.google.android.gms:play-services-identity:10.0.1'
+
+        //Analytics
+        compile 'com.google.android.gms:play-services-analytics:10.0.1'
+
+        //Awareness
+        compile 'com.google.android.gms:play-services-awareness:10.0.1'
+
+        //Cast
+        compile 'com.google.android.gms:play-services-cast:10.0.1'
+
+        //Google Cloud Messaging (Replaced by FCM Mostly)
+        compile 'com.google.android.gms:play-services-gcm:10.0.1'
+
+        //Drive
+        compile 'com.google.android.gms:play-services-drive:10.0.1'
+
+        //Fit
+        compile 'com.google.android.gms:play-services-fitness:10.0.1'
+ 
+        //Location and Activity Recognition
+        compile 'com.google.android.gms:play-services-location:10.0.1'
+
+        //Maps
+        compile 'com.google.android.gms:play-services-maps:10.0.1'
+
+        //Ads
+        compile 'com.google.android.gms:play-services-ads:10.0.1'
+
+        //Places
+        compile 'com.google.android.gms:play-services-places:10.0.1'
+
+        //Vision
+        compile 'com.google.android.gms:play-services-vision:10.0.1'
+
+        //Nearby
+        compile 'com.google.android.gms:play-services-nearby:10.0.1'
+
+        //Panorama
+        compile 'com.google.android.gms:play-services-panorama:10.0.1'
+
+        //Game Services
+        compile 'com.google.android.gms:play-services-games:10.0.1'
+
+        //SafetyNet
+        compile 'com.google.android.gms:play-services-safetynet:10.0.1'
+
+        //Pay
+        compile 'com.google.android.gms:play-services-wallet:10.0.1'
+
+        //Wearable
+        compile 'com.google.android.gms:play-services-wearable:10.0.1'
+
+        ////////////
+        //Firebase//
+        ////////////
+
+        //App Indexing
+        compile 'com.google.firebase:firebase-appindexing:10.0.1'
+        //Messaging (Push notifications)
+        compile 'com.google.firebase:firebase-messaging:10.0.1'
+        //Realitime DB
+        compile 'com.google.firebase:firebase-database:10.0.1'
+        //Crash Reporting
+        compile 'com.google.firebase:firebase-crash:10.0.1'
+        //Core components
+        compile 'com.google.firebase:firebase-core:10.0.1'
+
+    }
+}
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    testCompile 'junit:junit:4.12'
+}
+apply plugin: 'com.google.gms.google-services'

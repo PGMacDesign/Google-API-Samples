@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "89930759331",
+    "firebase_url": "https://pgmacdesign-apisamples.firebaseio.com",
+    "project_id": "pgmacdesign-apisamples",
+    "storage_bucket": "pgmacdesign-apisamples.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:89930759331:android:f07d399700f21c32",
+        "android_client_info": {
+          "package_name": "com.pgmacdesign.googleapisamples"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "89930759331-l8ktvrkqqqo7o8bf8oj6r98e8vitt5c8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pgmacdesign.googleapisamples",
+            "certificate_hash": "2E1C995FC11A7105C8A55CA5F86A42645A2BF8E6"
+          }
+        },
+        {
+          "client_id": "89930759331-qt56dvo2tmp3kdvpjjk4t95ivhd88rle.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkNQFcWtPQQBwYCAw1cZmaAhb1lDupFp8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "89930759331-qt56dvo2tmp3kdvpjjk4t95ivhd88rle.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
