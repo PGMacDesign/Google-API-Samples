@@ -10,8 +10,58 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.pgmacdesign.googleapisamples.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/location_simple_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="Simple Location Example"
+                />
+
+            <LinearLayout
+                android:id="@+id/geofences_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@+id/location_simple_location"
+                android:weightSum="100"
+                >
+
+                <Button
+                    android:id="@+id/location_add_geofence"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="50"
+                    android:text="Add GeoFences"
+                    />
+
+                <Button
+                    android:id="@+id/location_remove_geofence"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="50"
+                    android:text="Remove GeoFences"
+                    />
+
+            </LinearLayout>
+            <Button
+                android:id="@+id/ddddddddddd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/geofences_layout"
+                android:text="UNUSED!!!!!"
+                />
+
+
+        </RelativeLayout>
+    </ScrollView>
 </RelativeLayout>

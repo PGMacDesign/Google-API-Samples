@@ -70,7 +70,7 @@ android {
 
         //Fit
         compile 'com.google.android.gms:play-services-fitness:10.0.1'
- 
+
         //Location and Activity Recognition
         compile 'com.google.android.gms:play-services-location:10.0.1'
 
