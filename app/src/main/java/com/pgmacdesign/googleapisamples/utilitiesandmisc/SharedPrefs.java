@@ -181,7 +181,12 @@ public class SharedPrefs {
     }
 
     public static SharedPreferences getPrefs(){
-        prefs1 = MyApplication.getInstance().getApplicationContext().getSharedPreferences(
+        Context context = MyApplication.getAppContext();
+        if(context == null) {
+            L.m("context is null");
+        }
+
+        prefs1 = context.getSharedPreferences(
                 Constants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs1;
     }

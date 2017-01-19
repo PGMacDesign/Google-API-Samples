@@ -12,6 +12,10 @@ public class MyApplication extends Application {
     private static MyApplication myApplication = null;
     private static Context context;
 
+    static {
+        myApplication = getInstance();
+    }
+
     public static MyApplication getInstance(){
         if(myApplication == null) {
             myApplication = new MyApplication();

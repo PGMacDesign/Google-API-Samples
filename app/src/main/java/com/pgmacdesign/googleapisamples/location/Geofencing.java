@@ -185,7 +185,12 @@ public class Geofencing  implements
             mGeofencesAdded = !mGeofencesAdded;
             SharedPrefs.save(Constants.GEOFENCES_ADDED_KEY, mGeofencesAdded);
 
-            L.m("GeoFences Removed");
+            if(mGeofencesAdded){
+                L.m("GeoFences Added");
+            } else {
+                L.m("GeoFences Removed");
+            }
+
         } else {
             // Get the status code for the error and log it using a user-friendly message.
             String errorMessage = status.getStatusMessage();
