@@ -13,9 +13,9 @@ public class MyApplication extends Application {
     private static Context context;
 
     public static MyApplication getInstance(){
-        if(myApplication == null)
+        if(myApplication == null) {
             myApplication = new MyApplication();
-
+        }
 
         return myApplication;
     }
@@ -23,6 +23,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        myApplication = getInstance();
         MyApplication.context = getApplicationContext();
     }
 

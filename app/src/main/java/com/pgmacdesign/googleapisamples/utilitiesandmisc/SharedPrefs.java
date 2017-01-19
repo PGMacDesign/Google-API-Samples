@@ -181,10 +181,8 @@ public class SharedPrefs {
     }
 
     public static SharedPreferences getPrefs(){
-        //Use this top one for default preferences. For now, using custom shared preferences as defined in constants
-        //SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
-        prefs1 = MyApplication.getAppContext().getSharedPreferences(Constants.PREFS_NAME,
-                Context.MODE_PRIVATE);
+        prefs1 = MyApplication.getInstance().getApplicationContext().getSharedPreferences(
+                Constants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs1;
     }
 
