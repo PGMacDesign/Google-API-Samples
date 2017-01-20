@@ -29,6 +29,9 @@ public class Constants {
     ///////////////////
 
     public static final String PACKAGE_NAME = "com.pgmacdesign.googleapisamples";
+    public static final String ANDROID_CHECK_ATTESTATIONS_VERIFICATION =
+            "https://www.googleapis.com/androidcheck/v1/attestations/verify?key=";
+
 
     ///////////////////
     //Regex Strings////
@@ -71,6 +74,13 @@ public class Constants {
     public static final int TAG_LOCATION_OBJECT = 5100;
     //String explanation of why it failed
     public static final int TAG_LOCATION_FAILED = 5101;
+    //SafetyNet Sample Tag
+    public static final int TAG_SAFETY_NET_SUCCESS = 5102;
+    //Google signin request tag
+    public static final int GOOGLE_SIGNIN_REQUEST_CODE = 5103;
+
+
+
     //For this sample, geofences expire after twelve hours.
     public static final long GEOFENCE_EXPIRATION_IN_MILLISECONDS = 12 * 60 * 60 * 1000;
     // 1 mile, 1.6 km
@@ -78,6 +88,7 @@ public class Constants {
     public static final String GEOFENCES_ADDED_KEY = "geofences_added_key";
     //Sample Map for storing information about airports in the San Francisco bay area.
     public static final HashMap<String, LatLng> MY_LOCATIONS = new HashMap<String, LatLng>();
+
     static {
 
         //The String ID in the first part is the ID we will use for parsing

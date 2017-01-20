@@ -43,7 +43,7 @@
     <!-- Location Address code -->
     <string name="no_geocoder_available">No geocoder available</string>
 
-    <string name="fetch_address">Fetch address</string>
+    <string name="fetch_address">Get Current Address</string>
 
     <string name="address_found">Address found</string>
 

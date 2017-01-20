@@ -8,11 +8,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.pgmacdesign.googleapisamples.accountlogin.SimpleGoogleAccountLogin;
 import com.pgmacdesign.googleapisamples.activityrecognition.DetectedActivitiesActivity;
 import com.pgmacdesign.googleapisamples.location.GeoLocationUpdates;
 import com.pgmacdesign.googleapisamples.location.Geofencing;
 import com.pgmacdesign.googleapisamples.location.GetSimpleLocation;
 import com.pgmacdesign.googleapisamples.location.LocationAddressActivity;
+import com.pgmacdesign.googleapisamples.safetynet.SimpleSafetyNetExample;
 import com.pgmacdesign.googleapisamples.utilitiesandmisc.Constants;
 import com.pgmacdesign.googleapisamples.utilitiesandmisc.L;
 import com.pgmacdesign.googleapisamples.utilitiesandmisc.OnTaskCompleteListener;
@@ -23,10 +25,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private GetSimpleLocation simpleLocation;
     private Geofencing geofencing;
     private GeoLocationUpdates geoLocationUpdates;
+    private SimpleSafetyNetExample simpleSafetyNetExample;
+    private SimpleGoogleAccountLogin simpleGoogleAccountLogin;
 
     //UI
     private Button location_simple_location, location_add_geofence, activity_recognition_checking,
-            location_update_checking, location_address_activity;
+            location_update_checking, location_address_activity, safety_net_checking,
+            simple_google_account_login;
     private TextView dynamic_tv;
 
     @Override
@@ -51,18 +56,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 R.id.location_update_checking);
         this.location_address_activity = (Button) this.findViewById(
                 R.id.location_address_activity);
+        this.simple_google_account_login = (Button) this.findViewById(
+                R.id.simple_google_account_login);
+        this.safety_net_checking = (Button) this.findViewById(
+                R.id.safety_net_checking);
 
         this.location_simple_location.setTransformationMethod(null);
         this.location_add_geofence.setTransformationMethod(null);
         this.activity_recognition_checking.setTransformationMethod(null);
         this.location_update_checking.setTransformationMethod(null);
         this.location_address_activity.setTransformationMethod(null);
+        this.safety_net_checking.setTransformationMethod(null);
+        this.simple_google_account_login.setTransformationMethod(null);
 
         this.location_simple_location.setOnClickListener(this);
         this.location_add_geofence.setOnClickListener(this);
         this.activity_recognition_checking.setOnClickListener(this);
         this.location_update_checking.setOnClickListener(this);
         this.location_address_activity.setOnClickListener(this);
+        this.safety_net_checking.setOnClickListener(this);
+        this.simple_google_account_login.setOnClickListener(this);
 
     }
 
@@ -99,7 +112,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent);
                 break;
 
+            case R.id.safety_net_checking:
+                simpleSafetyNetExample = new SimpleSafetyNetExample(this, this);
 
+                break;
+
+            case R.id.simple_google_account_login:
+                simpleGoogleAccountLogin = new SimpleGoogleAccountLogin(this, this);
+
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == Constants.GOOGLE_SIGNIN_REQUEST_CODE){
+            L.m("data to String = " + data.getDataString());
+            L.m("data to String2 = " + data.getData());
+            simpleGoogleAccountLogin.onOnActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -109,6 +140,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String str;
 
         switch (tag){
+
+            case Constants.TAG_SAFETY_NET_SUCCESS:
+                str = (String) obj;
+                L.m("str = " + str);
+                break;
+
             case Constants.TAG_LOCATION_FAILED:
                 str = (String) obj;
                 L.toast(this, "Location Failed: " + str);

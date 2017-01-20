@@ -1,35 +1,21 @@
 package com.pgmacdesign.googleapisamples.location;
 
+import android.content.Context;
 import android.content.Intent;
-import android.location.Geocoder;
-import android.location.Location;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.pgmacdesign.googleapisamples.R;
-import com.pgmacdesign.googleapisamples.utilitiesandmisc.Constants;
-
-
-import android.content.Intent;
+import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,8 +25,23 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationServices;
+import com.pgmacdesign.googleapisamples.R;
+import com.pgmacdesign.googleapisamples.utilitiesandmisc.Constants;
+import com.pgmacdesign.googleapisamples.utilitiesandmisc.GoogleClientSingleton;
+import com.pgmacdesign.googleapisamples.utilitiesandmisc.L;
+import com.pgmacdesign.googleapisamples.utilitiesandmisc.MiscUtilities;
+import com.pgmacdesign.googleapisamples.utilitiesandmisc.PermissionUtilities;
+import com.pgmacdesign.googleapisamples.utilitiesandmisc.StringUtilities;
+
+import java.io.FileDescriptor;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 public class LocationAddressActivity extends AppCompatActivity implements
-        ConnectionCallbacks, OnConnectionFailedListener{
+        ConnectionCallbacks, OnConnectionFailedListener, View.OnClickListener {
 
     protected static final String TAG = "LocationAddressActivity";
 
@@ -69,21 +70,16 @@ public class LocationAddressActivity extends AppCompatActivity implements
      */
     private AddressResultReceiver mResultReceiver;
 
-    /**
-     * Displays the location address.
-     */
+    //UI
     protected TextView mLocationAddressTextView;
-
-    /**
-     * Visible while the address is being fetched.
-     */
     private ProgressBar mProgressBar;
+    private EditText activity_location_address_et;
+    private Button mFetchAddressButton, activity_location_address_submit;
+    private RecyclerView activity_location_address_recyclerview;
 
-    /**
-     * Kicks off the request to fetch an address when pressed.
-     */
-    private Button mFetchAddressButton;
+    private AdapterAddressRecyclerview adapter;
 
+    private Double latitude, longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +91,13 @@ public class LocationAddressActivity extends AppCompatActivity implements
         mLocationAddressTextView = (TextView) findViewById(R.id.location_address_view);
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
         mFetchAddressButton = (Button) findViewById(R.id.fetch_address_button);
+        activity_location_address_submit = (Button) this.findViewById(
+                R.id.activity_location_address_submit);
+        activity_location_address_et = (EditText) this.findViewById(
+                R.id.activity_location_address_et);
+        activity_location_address_recyclerview = (RecyclerView) this.findViewById(
+                R.id.activity_location_address_recyclerview);
+        activity_location_address_submit.setOnClickListener(this);
 
         // Set defaults, then update using values stored in the Bundle.
         mAddressRequested = false;
@@ -103,6 +106,15 @@ public class LocationAddressActivity extends AppCompatActivity implements
 
         updateUIWidgets();
         buildGoogleApiClient();
+
+        init();
+
+        latitude = longitude = null;
+
+        adapter = new AdapterAddressRecyclerview(this);
+
+        activity_location_address_recyclerview.setLayoutManager(new LinearLayoutManager(this));
+        activity_location_address_recyclerview.setAdapter(adapter);
     }
 
 
@@ -128,14 +140,21 @@ public class LocationAddressActivity extends AppCompatActivity implements
     }
 
     /**
+     * Get permissions first
+     * @return False if permissions have not been granted, true if they had been
+     */
+    private boolean init(){
+        boolean bool = PermissionUtilities.getLocationPermissions(this);
+        return bool;
+    }
+
+    /**
      * Builds a GoogleApiClient. Uses {@code #addApi} to request the LocationServices API.
      */
     protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
+        mGoogleApiClient = GoogleClientSingleton.buildClient(
+                this, LocationServices.API, this, this
+        );
     }
 
     /**
@@ -147,6 +166,12 @@ public class LocationAddressActivity extends AppCompatActivity implements
         if (mGoogleApiClient.isConnected() && mLastLocation != null) {
             startIntentService();
         }
+        try {
+            Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            latitude = mLastLocation.getLatitude();
+            longitude = mLastLocation.getLongitude();
+        } catch (SecurityException e) {
+        } catch (Exception e){}
         // If GoogleApiClient isn't connected, we process the user's request by setting
         // mAddressRequested to true. Later, when GoogleApiClient connects, we launch the service to
         // fetch the address. As far as the user is concerned, pressing the Fetch Address button
@@ -176,21 +201,28 @@ public class LocationAddressActivity extends AppCompatActivity implements
     public void onConnected(Bundle connectionHint) {
         // Gets the best and most recent location currently available, which may be null
         // in rare cases when a location is not available.
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (mLastLocation != null) {
-            // Determine whether a Geocoder is available.
-            if (!Geocoder.isPresent()) {
-                Toast.makeText(this, R.string.no_geocoder_available, Toast.LENGTH_LONG).show();
-                return;
+        if (!init()) {
+            return;
+        }
+        try {
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (mLastLocation != null) {
+                // Determine whether a Geocoder is available.
+                if (!Geocoder.isPresent()) {
+                    Toast.makeText(this, R.string.no_geocoder_available, Toast.LENGTH_LONG).show();
+                    return;
+                }
+                // It is possible that the user presses the button to get the address before the
+                // GoogleApiClient object successfully connects. In such a case, mAddressRequested
+                // is set to true, but no attempt is made to fetch the address (see
+                // fetchAddressButtonHandler()) . Instead, we start the intent service here if the
+                // user has requested an address, since we now have a connection to GoogleApiClient.
+                if (mAddressRequested) {
+                    startIntentService();
+                }
             }
-            // It is possible that the user presses the button to get the address before the
-            // GoogleApiClient object successfully connects. In such a case, mAddressRequested
-            // is set to true, but no attempt is made to fetch the address (see
-            // fetchAddressButtonHandler()) . Instead, we start the intent service here if the
-            // user has requested an address, since we now have a connection to GoogleApiClient.
-            if (mAddressRequested) {
-                startIntentService();
-            }
+        } catch (SecurityException se){
+            se.printStackTrace();
         }
     }
 
@@ -218,7 +250,7 @@ public class LocationAddressActivity extends AppCompatActivity implements
     public void onConnectionFailed(ConnectionResult result) {
         // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
         // onConnectionFailed.
-        Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
+        L.m("Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
     }
 
 
@@ -234,7 +266,7 @@ public class LocationAddressActivity extends AppCompatActivity implements
      * Updates the address in the UI.
      */
     protected void displayAddressOutput() {
-        mLocationAddressTextView.setText(mAddressOutput);
+        mLocationAddressTextView.setText("Current Address: \n" + mAddressOutput);
     }
 
     /**
@@ -242,6 +274,16 @@ public class LocationAddressActivity extends AppCompatActivity implements
      */
     private void updateUIWidgets() {
         if (mAddressRequested) {
+            mProgressBar.setVisibility(ProgressBar.VISIBLE);
+            mFetchAddressButton.setEnabled(false);
+        } else {
+            mProgressBar.setVisibility(ProgressBar.GONE);
+            mFetchAddressButton.setEnabled(true);
+        }
+    }
+
+    private void updateUIWidgets(boolean bool) {
+        if (bool) {
             mProgressBar.setVisibility(ProgressBar.VISIBLE);
             mFetchAddressButton.setEnabled(false);
         } else {
@@ -267,6 +309,53 @@ public class LocationAddressActivity extends AppCompatActivity implements
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    @Override
+    public void onClick(View v) {
+        if (!init()) {
+            return;
+        }
+        switch (v.getId()){
+            case R.id.activity_location_address_submit:
+                try {
+                    String str = activity_location_address_et.getText().toString();
+                    if(!StringUtilities.isNullOrEmpty(str)){
+                        updateUIWidgets(true);
+                        searchAddress(str);
+                    }
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+                break;
+        }
+    }
+
+    private void searchAddress(String str){
+        if(StringUtilities.isNullOrEmpty(str)){
+            return;
+        }
+
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        List<Address> searchResults = new ArrayList<>();
+        try {
+            if(latitude != null && longitude != null){
+                L.m("Lat and lng not null, searching with them");
+                searchResults = geocoder.getFromLocationName(str, 20,
+                        (latitude - 0.05), (longitude - 0.05),
+                        (latitude + 0.05), (longitude + 0.05));
+            } else {
+                L.m("Lat and lng null, omitting them");
+                searchResults = geocoder.getFromLocationName(str, 20);
+            }
+            if(!MiscUtilities.isListNullOrEmpty(searchResults)){
+                adapter.setAddresses(searchResults);
+                mLocationAddressTextView.setText("Search results below");
+            }
+            updateUIWidgets(false);
+        } catch (IOException ioe){
+            updateUIWidgets(false);
+            ioe.printStackTrace();
+        }
+    }
     /**
      * Receiver for data sent from FetchAddressIntentService.
      */
@@ -293,6 +382,62 @@ public class LocationAddressActivity extends AppCompatActivity implements
             // Reset. Enable the Fetch Address button and stop showing the progress bar.
             mAddressRequested = false;
             updateUIWidgets();
+        }
+    }
+
+    class temp extends AsyncTaskLoader <Void> {
+        public temp(Context context) {
+            super(context);
+        }
+
+        @Override
+        public void setUpdateThrottle(long delayMS) {
+            super.setUpdateThrottle(delayMS);
+        }
+
+        @Override
+        protected void onForceLoad() {
+            super.onForceLoad();
+        }
+
+        @Override
+        protected boolean onCancelLoad() {
+            return super.onCancelLoad();
+        }
+
+        @Override
+        public void onCanceled(Void data) {
+            super.onCanceled(data);
+        }
+
+        @Override
+        protected Void onLoadInBackground() {
+            return super.onLoadInBackground();
+        }
+
+        @Override
+        public void cancelLoadInBackground() {
+            super.cancelLoadInBackground();
+        }
+
+        @Override
+        public boolean isLoadInBackgroundCanceled() {
+            return super.isLoadInBackgroundCanceled();
+        }
+
+        @Override
+        public void waitForLoader() {
+            super.waitForLoader();
+        }
+
+        @Override
+        public void dump(String prefix, FileDescriptor fd, PrintWriter writer, String[] args) {
+            super.dump(prefix, fd, writer, args);
+        }
+
+        @Override
+        public Void loadInBackground() {
+            return null;
         }
     }
 }

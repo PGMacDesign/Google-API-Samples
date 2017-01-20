@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.pgmacdesign.googleapisamples.R;
 import com.pgmacdesign.googleapisamples.utilitiesandmisc.Constants;
+import com.pgmacdesign.googleapisamples.utilitiesandmisc.L;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ public class FetchAddressIntentService extends IntentService {
 
         // Check if receiver was properly registered.
         if (mReceiver == null) {
-            Log.wtf(TAG, "No receiver received. There is nowhere to send the results.");
+            L.m("No receiver received. There is nowhere to send the results.");
             return;
         }
 
@@ -67,7 +68,7 @@ public class FetchAddressIntentService extends IntentService {
         // send an error error message and return.
         if (location == null) {
             errorMessage = getString(R.string.no_location_data_provided);
-            Log.wtf(TAG, errorMessage);
+            L.m(errorMessage);
             deliverResultToReceiver(Constants.FAILURE_RESULT, errorMessage);
             return;
         }
@@ -83,7 +84,6 @@ public class FetchAddressIntentService extends IntentService {
         // to alter the presentation of information such as numbers or dates to suit the conventions
         // in the region they describe.
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-
         // Address found using the Geocoder.
         List<Address> addresses = null;
 
@@ -91,6 +91,7 @@ public class FetchAddressIntentService extends IntentService {
             // Using getFromLocation() returns an array of Addresses for the area immediately
             // surrounding the given latitude and longitude. The results are a best guess and are
             // not guaranteed to be accurate.
+
             addresses = geocoder.getFromLocation(
                     location.getLatitude(),
                     location.getLongitude(),
@@ -103,9 +104,9 @@ public class FetchAddressIntentService extends IntentService {
         } catch (IllegalArgumentException illegalArgumentException) {
             // Catch invalid latitude or longitude values.
             errorMessage = getString(R.string.invalid_lat_long_used);
-            Log.e(TAG, errorMessage + ". " +
+            L.m(errorMessage + ". " +
                     "Latitude = " + location.getLatitude() +
-                    ", Longitude = " + location.getLongitude(), illegalArgumentException);
+                    ", Longitude = " + location.getLongitude());
         }
 
         // Handle case where no address was found.
@@ -129,9 +130,10 @@ public class FetchAddressIntentService extends IntentService {
             // getCountryCode() ("US", for example)
             // getCountryName() ("United States", for example)
             for(int i = 0; i < address.getMaxAddressLineIndex(); i++) {
+                L.m("iterating through addresses: " + address.getAddressLine(i));
                 addressFragments.add(address.getAddressLine(i));
             }
-            Log.i(TAG, getString(R.string.address_found));
+            L.m(getString(R.string.address_found));
             deliverResultToReceiver(Constants.SUCCESS_RESULT,
                     TextUtils.join(System.getProperty("line.separator"), addressFragments));
         }
