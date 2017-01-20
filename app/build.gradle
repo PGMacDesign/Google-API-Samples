@@ -36,6 +36,8 @@ android {
         //Multi-dex
         compile 'com.android.support:multidex:1.0.1'
 
+        //Gson
+        compile 'com.google.code.gson:gson:2.8.0'
 
         ////////////
         //Google////

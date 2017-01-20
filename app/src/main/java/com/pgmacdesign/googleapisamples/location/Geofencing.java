@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -39,7 +40,7 @@ public class Geofencing  implements
     private GoogleApiClient mGoogleApiClient;
     private OnTaskCompleteListener listener;
 
-
+    private boolean initialCheck;
 
     //The list of geofences used in this sample.
     private ArrayList<Geofence> mGeofenceList;
@@ -58,6 +59,7 @@ public class Geofencing  implements
             mGeofenceList = populateGeofenceList();
         }
         this.mGeofenceList = mGeofenceList;
+        this.initialCheck = false;
         mGeofencesAdded = SharedPrefs.getBoolean(Constants.GEOFENCES_ADDED_KEY, false);
         init();
 
@@ -93,8 +95,19 @@ public class Geofencing  implements
         // Add the geofences to be monitored by geofencing service.
         builder.addGeofences(mGeofenceList);
 
-        // Return a GeofencingRequest.
         return builder.build();
+    }
+
+    public void startGPSTracking(){
+        Handler handler = new Handler();
+        handler.postDelayed(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        addGeofences();
+                    }
+                }, (1000 * 2)
+        );
     }
 
     /**
@@ -102,6 +115,7 @@ public class Geofencing  implements
      * specified geofences. Handles the success or failure results returned by addGeofences().
      */
     public void addGeofences() {
+
         if(!init()){
             return;
         }
@@ -151,7 +165,13 @@ public class Geofencing  implements
 
 
     @Override
-    public void onConnected(@Nullable Bundle bundle) {}
+    public void onConnected(@Nullable Bundle bundle) {
+        try {
+
+        } catch (SecurityException se){
+            se.printStackTrace();
+        }
+    }
 
     /**
      * The connection to Google Play services was lost for some reason. We call connect() to
@@ -211,6 +231,7 @@ public class Geofencing  implements
             return mGeofencePendingIntent;
         }
         Intent intent = new Intent(activity, GeofenceTransitionsIntentService.class);
+        intent.putExtra("test", "testing");
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling
         // addGeofences() and removeGeofences().
         return PendingIntent.getService(activity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -222,7 +243,7 @@ public class Geofencing  implements
      */
     public ArrayList<Geofence> populateGeofenceList() {
         ArrayList<Geofence> aList = new ArrayList<>();
-        for (Map.Entry<String, LatLng> entry : Constants.BAY_AREA_LANDMARKS.entrySet()) {
+        for (Map.Entry<String, LatLng> entry : Constants.MY_LOCATIONS.entrySet()) {
 
             aList.add(new Geofence.Builder()
                     // Set the request ID of the geofence. This is a string to identify this

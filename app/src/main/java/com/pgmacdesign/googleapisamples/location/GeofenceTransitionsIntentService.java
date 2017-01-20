@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Location;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
@@ -49,6 +50,15 @@ public class GeofenceTransitionsIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
+        try {
+            Location loc = geofencingEvent.getTriggeringLocation();
+            /*
+            This is the loc object printed out in json form:
+            {"mAccuracy":22.192,"mAltitude":0.0,"mBearing":0.0,"mDistance":0.0,"mElapsedRealtimeNanos":1379000220000000,"mHasAccuracy":true,"mHasAltitude":false,"mHasBearing":false,"mHasSpeed":false,"mInitialBearing":0.0,"mIsFromMockProvider":false,"mLat1":0.0,"mLat2":0.0,"mLatitude":33.6321322,"mLon1":0.0,"mLon2":0.0,"mLongitude":-117.7348175,"mProvider":"fused","mResults":[0.0,0.0],"mSpeed":0.0,"mTime":1484848802581}
+             */
+        } catch (Exception e){
+            e.printStackTrace();
+        }
         if (geofencingEvent.hasError()) {
             switch (geofencingEvent.getErrorCode()) {
                 case GeofenceStatusCodes.GEOFENCE_NOT_AVAILABLE:
@@ -75,14 +85,12 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
             // Get the transition details as a String.
             String geofenceTransitionDetails = getGeofenceTransitionDetails(
-                    this,
-                    geofenceTransition,
-                    triggeringGeofences
+                    this, geofenceTransition, triggeringGeofences
             );
 
             // Send notification and log the transition details.
             sendNotification(geofenceTransitionDetails);
-            L.m(geofenceTransitionDetails);
+            L.m("Geofence Transition details = " + geofenceTransitionDetails);
         } else {
             // Log the error.
             L.m("Error: " + geofenceTransition);
@@ -104,13 +112,15 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
         String geofenceTransitionString = getTransitionString(geofenceTransition);
 
-        // Get the Ids of each geofence that was triggered.
+        // Get the Ids (String names) of each geofence that was triggered.
         ArrayList triggeringGeofencesIdsList = new ArrayList();
         for (Geofence geofence : triggeringGeofences) {
-            triggeringGeofencesIdsList.add(geofence.getRequestId());
+            //This adds the String names / IDs of the location to the array
+            String str = geofence.getRequestId();
+            triggeringGeofencesIdsList.add(str);
         }
         String triggeringGeofencesIdsString = TextUtils.join(", ",  triggeringGeofencesIdsList);
-
+        //This will say something like, "Entered : x" or "Exited : x", where X is the location
         return geofenceTransitionString + ": " + triggeringGeofencesIdsString;
     }
 

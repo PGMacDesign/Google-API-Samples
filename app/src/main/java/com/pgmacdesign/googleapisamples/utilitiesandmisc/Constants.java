@@ -1,6 +1,11 @@
 package com.pgmacdesign.googleapisamples.utilitiesandmisc;
 
+import android.content.Context;
+import android.content.res.Resources;
+
+import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.maps.model.LatLng;
+import com.pgmacdesign.googleapisamples.R;
 
 import java.util.HashMap;
 
@@ -18,6 +23,12 @@ public class Constants {
     4) https://github.com/googlesamples/android-play-location
     5)
     */
+
+    ///////////////////
+    //Misc ////////////
+    ///////////////////
+
+    public static final String PACKAGE_NAME = "com.pgmacdesign.googleapisamples";
 
     ///////////////////
     //Regex Strings////
@@ -39,7 +50,20 @@ public class Constants {
     public static final int PERMISSION_LOCATION_REQUEST = 4000;
     public static final int PERMISSION_CAMERA_REQUEST = 4001;
 
-    ////////////////////////
+    //Misc Tags
+    public static final int SUCCESS_RESULT = 0;
+    public static final int FAILURE_RESULT = 1;
+
+    //////////////////////////////
+    //Location Address Activity //
+    //////////////////////////////
+
+    public static final String RECEIVER = PACKAGE_NAME + "locationaddress.RECEIVER";
+
+    public static final String RESULT_DATA_KEY = PACKAGE_NAME + "locationaddress.RESULT_DATA_KEY";
+
+    public static final String LOCATION_DATA_EXTRA = PACKAGE_NAME + "locationaddress.LOCATION_DATA_EXTRA";
+
     //Location tags / Misc//
     ////////////////////////
 
@@ -53,15 +77,93 @@ public class Constants {
     public static final float GEOFENCE_RADIUS_IN_METERS = 1609;
     public static final String GEOFENCES_ADDED_KEY = "geofences_added_key";
     //Sample Map for storing information about airports in the San Francisco bay area.
-    public static final HashMap<String, LatLng> BAY_AREA_LANDMARKS = new HashMap<String, LatLng>();
+    public static final HashMap<String, LatLng> MY_LOCATIONS = new HashMap<String, LatLng>();
     static {
+
+        //The String ID in the first part is the ID we will use for parsing
+
         // San Francisco International Airport.
-        BAY_AREA_LANDMARKS.put("SFO", new LatLng(37.621313, -122.378955));
+        MY_LOCATIONS.put("SFO", new LatLng(37.621313, -122.378955));
         // Googleplex.
-        BAY_AREA_LANDMARKS.put("GOOGLE", new LatLng(37.422611,-122.0840577));
+        MY_LOCATIONS.put("GOOGLE", new LatLng(37.422611,-122.0840577));
+        //HOTB
+        MY_LOCATIONS.put("HOTB", new LatLng(33.632190,-117.734856));
     }
 
+    ////////////////////////
+    //Activity Recognition//
+    ////////////////////////
+
+    public static final String ACTIVITY_RECOGNITION_PACKAGE_STRING = ".activityrecognition";
+
+    public static final String BROADCAST_ACTION = PACKAGE_NAME +
+            ACTIVITY_RECOGNITION_PACKAGE_STRING + ".BROADCAST_ACTION";
+
+    public static final String ACTIVITY_EXTRA = PACKAGE_NAME +
+            ACTIVITY_RECOGNITION_PACKAGE_STRING + ".ACTIVITY_EXTRA";
+
+    public static final String SHARED_PREFERENCES_NAME = PACKAGE_NAME +
+            ACTIVITY_RECOGNITION_PACKAGE_STRING + ".SHARED_PREFERENCES";
+
+    public static final String ACTIVITY_UPDATES_REQUESTED_KEY = PACKAGE_NAME +
+            ACTIVITY_RECOGNITION_PACKAGE_STRING + ".ACTIVITY_UPDATES_REQUESTED";
+
+    public static final String DETECTED_ACTIVITIES = PACKAGE_NAME +
+            ACTIVITY_RECOGNITION_PACKAGE_STRING + ".DETECTED_ACTIVITIES";
+
+    /**
+     * The desired time between activity detections. Larger values result in fewer activity
+     * detections while improving battery life. A value of 0 results in activity detections at the
+     * fastest possible rate. Getting frequent updates negatively impact battery life and a real
+     * app may prefer to request less frequent updates.
+     */
+    public static final long DETECTION_INTERVAL_IN_MILLISECONDS = 100;
+    /**
+     * The fastest rate for active location updates. Exact. Updates will never be more frequent
+     * than this value.
+     */
+    public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
+            DETECTION_INTERVAL_IN_MILLISECONDS / 2;
+
+    /**
+     * List of DetectedActivity types that we monitor in this sample.
+     */
+    public static final int[] MONITORED_ACTIVITIES = {
+            DetectedActivity.STILL,
+            DetectedActivity.ON_FOOT,
+            DetectedActivity.WALKING,
+            DetectedActivity.RUNNING,
+            DetectedActivity.ON_BICYCLE,
+            DetectedActivity.IN_VEHICLE,
+            DetectedActivity.TILTING,
+            DetectedActivity.UNKNOWN
+    };
 
 
-
+    /**
+     * Returns a human readable String corresponding to a detected activity type.
+     */
+    public static String getActivityString(Context context, int detectedActivityType) {
+        Resources resources = context.getResources();
+        switch(detectedActivityType) {
+            case DetectedActivity.IN_VEHICLE:
+                return resources.getString(R.string.in_vehicle);
+            case DetectedActivity.ON_BICYCLE:
+                return resources.getString(R.string.on_bicycle);
+            case DetectedActivity.ON_FOOT:
+                return resources.getString(R.string.on_foot);
+            case DetectedActivity.RUNNING:
+                return resources.getString(R.string.running);
+            case DetectedActivity.STILL:
+                return resources.getString(R.string.still);
+            case DetectedActivity.TILTING:
+                return resources.getString(R.string.tilting);
+            case DetectedActivity.UNKNOWN:
+                return resources.getString(R.string.unknown);
+            case DetectedActivity.WALKING:
+                return resources.getString(R.string.walking);
+            default:
+                return resources.getString(R.string.unidentifiable_activity, detectedActivityType);
+        }
+    }
 }
