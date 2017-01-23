@@ -90,11 +90,20 @@
                 />
 
             <Button
-                android:id="@+id/ddddddddddd"
+                android:id="@+id/firebase_dynamic_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/simple_google_account_login"
+                android:text="Firebase Auth Login"
+                />
+
+            <Button
+                android:id="@+id/ddddddddddd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/firebase_dynamic_button"
                 android:text="UNUSED!!!!!"
                 />
 

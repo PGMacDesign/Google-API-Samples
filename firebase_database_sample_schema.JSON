@@ -1,0 +1,65 @@
+{
+  "chat_rooms": 
+    {
+      "abc-123": {
+        "roomId": 555,
+        "mainUser": "Pat"
+      },
+      "bcd-234": {
+        "roomId": 777,
+        "mainUser": "Bob"
+      }
+    }
+  ,
+  "chat_messages": 
+    {
+      "abc-123": [
+        {
+          "chatId": 0,
+          "message": "Oh Hai!"
+        },
+        {
+          "chatId": 1,
+          "message": "yo"
+        }
+      ],
+      "bcd-234": [
+        {
+          "chatId": 0,
+          "message": "Oh Hai!"
+        },
+        {
+          "chatId": 1,
+          "message": "yo"
+        }
+      ]
+    }
+  
+}
+
+
+/*
+
+Sample Rules:
+{
+  "rules": {
+      "chat_rooms":{
+          "$uid": {
+            ".write": "((auth !== null) && ($uid.contains(auth.uid))) || (auth.isAdmin === true)",
+            ".read": "((auth !== null) && ($uid.contains(auth.uid))) || (auth.isAdmin === true)",
+            ".indexOn": "createdOn"
+          }
+      },
+      "chat_messages":{
+          "$uid": {
+            ".write": "((auth !== null) && ($uid.contains(auth.uid))) || (auth.isAdmin === true)",
+            ".read": "((auth !== null) && ($uid.contains(auth.uid))) || (auth.isAdmin === true)",
+            ".indexOn": "createdOn"
+          }            
+      }
+    }
+  
+}
+
+
+*/

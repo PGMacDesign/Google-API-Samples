@@ -131,6 +131,8 @@ android {
         compile 'com.google.firebase:firebase-database:10.0.1'
         //Crash Reporting
         compile 'com.google.firebase:firebase-crash:10.0.1'
+        //Auth
+        compile 'com.google.firebase:firebase-auth:10.0.1'
         //Core components
         compile 'com.google.firebase:firebase-core:10.0.1'
 

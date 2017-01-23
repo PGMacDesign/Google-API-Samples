@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.pgmacdesign.googleapisamples.accountlogin.SimpleGoogleAccountLogin;
 import com.pgmacdesign.googleapisamples.activityrecognition.DetectedActivitiesActivity;
+import com.pgmacdesign.googleapisamples.firebase.database.FirebaseDatabaseWrapper;
 import com.pgmacdesign.googleapisamples.location.GeoLocationUpdates;
 import com.pgmacdesign.googleapisamples.location.Geofencing;
 import com.pgmacdesign.googleapisamples.location.GetSimpleLocation;
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //UI
     private Button location_simple_location, location_add_geofence, activity_recognition_checking,
             location_update_checking, location_address_activity, safety_net_checking,
-            simple_google_account_login;
+            simple_google_account_login, firebase_dynamic_button;
     private TextView dynamic_tv;
 
     @Override
@@ -46,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         this.dynamic_tv = (TextView) this.findViewById(R.id.dynamic_tv);
 
+        this.firebase_dynamic_button = (Button) this.findViewById(
+                R.id.firebase_dynamic_button);
         this.location_simple_location = (Button) this.findViewById(
                 R.id.location_simple_location);
         this.location_add_geofence = (Button) this.findViewById(
@@ -68,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.location_address_activity.setTransformationMethod(null);
         this.safety_net_checking.setTransformationMethod(null);
         this.simple_google_account_login.setTransformationMethod(null);
+        this.firebase_dynamic_button.setTransformationMethod(null);
 
         this.location_simple_location.setOnClickListener(this);
         this.location_add_geofence.setOnClickListener(this);
@@ -76,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.location_address_activity.setOnClickListener(this);
         this.safety_net_checking.setOnClickListener(this);
         this.simple_google_account_login.setOnClickListener(this);
+        this.firebase_dynamic_button.setOnClickListener(this);
 
     }
 
@@ -120,6 +125,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.simple_google_account_login:
                 simpleGoogleAccountLogin = new SimpleGoogleAccountLogin(this, this);
 
+                break;
+
+            case R.id.firebase_dynamic_button:
+                FirebaseDatabaseWrapper.authenticate(this, "password");
                 break;
         }
     }

@@ -78,6 +78,10 @@ public class Constants {
     public static final int TAG_SAFETY_NET_SUCCESS = 5102;
     //Google signin request tag
     public static final int GOOGLE_SIGNIN_REQUEST_CODE = 5103;
+    //Firebase signin request tag
+    public static final int TAG_STRING = 5104;
+    //Null tag returned
+    public static final int TAG_NULL = 5105;
 
 
 
