@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.firebase_dynamic_button:
-                FirebaseDatabaseWrapper.authenticate(this, "password");
+                FirebaseDatabaseWrapper.authenticate(this, this, "password");
                 break;
         }
     }
