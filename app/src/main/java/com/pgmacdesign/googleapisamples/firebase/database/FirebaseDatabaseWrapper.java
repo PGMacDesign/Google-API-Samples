@@ -173,13 +173,19 @@ public class FirebaseDatabaseWrapper {
             return;
         }
 
+        /*
+        DatabaseReference ref = FirebaseDatabase.getInstance()
+                .getReference().getRoot().child("chat_rooms");
+        Query query = ref.child(firebaseUser.getDisplayName());
+        query.addValueEventListener(myListener);
+        */
         //String displayName = user.getDisplayName();
         //String email = user.getEmail();
 
-        //com.google.firebase.database.Query query = chatRoomsRef.child(user.getDisplayName());
-        com.google.firebase.database.Query query = chatRoomsRef.push();
+        //Reference: https://firebase.google.com/docs/reference/security/database/
+        com.google.firebase.database.Query query = chatRoomsRef.child(user.getDisplayName());
         query
-                //.addValueEventListener()
+        //chatRoomsRef
                 .addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -225,7 +231,7 @@ public class FirebaseDatabaseWrapper {
                         }
                         */
                     }
-
+                    L.m("succes!");
 
                 } catch (Exception e){
                     e.printStackTrace();
@@ -234,7 +240,7 @@ public class FirebaseDatabaseWrapper {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                L.m("onCancelled");
+                L.m("(getChatRooms(FirebaseUser user)) onCancelled");
             }
         });
 
